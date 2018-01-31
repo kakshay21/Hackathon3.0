@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+       #map {
+        height: 400px;
+        width: 100%;
+       }
+    </style>
+  </head>
+  <body>
+  <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <h3>My Google Maps Demo</h3>
+    <div id="map"></div>
+    <script>
+      function initMap() {
+        var uluru = {lat: 22.7304794, lng: 75.8708128};
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 4,
+          center: uluru
+        });
+        var marker = new google.maps.Marker({
+          position: uluru,
+          map: map
+        });
+        $.ajax({
+            type: 'POST',
+            url: '/api/map/route/',
+            data: JSON.stringify(uluru), // or JSON.stringify ({name: 'jonas'}),
+            success: function(data) {
+            console.log(data);
+            },
+            contentType: "application/json",
+            dataType: 'json'
+        });
+      }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBiixzz0CeP42DEUZOCY9abZVk8kbIB6Bo&callback=initMap">
+    </script>
+  </body>
+</html>

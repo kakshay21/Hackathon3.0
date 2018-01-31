@@ -16,10 +16,12 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from review_system.api import MapResource
+from review_system.views import home
 
 entry_resource = MapResource()
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^home/', home),
     url(r'^api/', include(entry_resource.urls)),
 ]

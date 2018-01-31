@@ -4,12 +4,12 @@ from tastypie.utils.urls import trailing_slash
 from django.conf.urls import url
 from utils import near_by_places
 from utils import find_route
+import json
 
 API_BASE_URL = 'api/map/'
 
-location = '22.7304794,75.8708128'
+# location = '22.7304794,75.8708128'
 destination = '22.7304794,75.8708128'
-radius = 1000
 
 
 class MapResource(ModelResource):
@@ -28,18 +28,39 @@ class MapResource(ModelResource):
         ]
 
     def find_near_by_location(self, request, *args, **kwargs):
+        if request:
+            body = json.loads(request.body)
+            # print body
+            location = str(body['lat']) + ',' + str(body['lng'])
+            resp = near_by_places(location)
+            # print resp
+            if resp['status'] == u'OK':
+                result = resp['results']
+                # print result
+                locations = []
 
-        resp = near_by_places(location)
-        return self.create_response(request, {
-            'resp1': resp,
-        })
+                for i in range(5):
+                    # print result[i]
+                    location = result[i]['geometry']['location']
+                    locations.append(location)
+                    # print location
+                print locations
+                return self.create_response(request, {
+                    'status': "sucess",
+                    'location': locations
+                })
 
     def find_route(self, request, *args, **kwargs):
-
-        resp = find_route(location, destination)
-        return self.create_response(request, {
-            'resp': resp,
-        })
+        if request:
+            body = json.loads(request.body)
+            # print body
+            location = str(body['lat']) + ',' + str(body['lng'])
+            resp = find_route(location, destination)
+            if resp:
+                print resp
+                return self.create_response(request, {
+                    'status': "sucess"
+                })
 
     def _post_resp(self, rel_url, data, res_type):
         url = API_BASE_URL + rel_url
