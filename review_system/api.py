@@ -4,6 +4,7 @@ from tastypie.utils.urls import trailing_slash
 from django.conf.urls import url
 from utils import near_by_places
 from utils import find_route
+from django.shortcuts import redirect
 import json
 
 API_BASE_URL = 'api/map/'

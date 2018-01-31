@@ -13,6 +13,7 @@
     <h3>My Google Maps Demo</h3>
     <div id="map"></div>
     <script>
+        var locations = new Array();
       function initMap() {
         var uluru = {lat: 22.7304794, lng: 75.8708128};
         var map = new google.maps.Map(document.getElementById('map'), {
@@ -20,15 +21,25 @@
           center: uluru
         });
         var marker = new google.maps.Marker({
-          position: uluru,
-          map: map
-        });
+                position: uluru,
+                map: map
+            }
+        );
         $.ajax({
             type: 'POST',
             url: '/api/map/route/',
             data: JSON.stringify(uluru), // or JSON.stringify ({name: 'jonas'}),
             success: function(data) {
-            console.log(data);
+                {#console.log(data['location']);#}
+                var loc =  data['location']
+                for(var i in loc){
+                    locations.push(loc[i]);
+                    var marker = new google.maps.Marker({
+                    position: loc[i],
+                    map: map
+                    });
+                }
+                console.log(locations);
             },
             contentType: "application/json",
             dataType: 'json'
