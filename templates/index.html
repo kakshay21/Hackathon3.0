@@ -27,14 +27,12 @@
 
   <script>
   var x = document.getElementById("demo");
-
   function getLocation() {
       if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(initMap);
       } else {
           x.innerHTML = "Geolocation is not supported by this browser.";
       }
-
       var locations = new Array();
     function initMap(position) {
       var uluru = {lat: position.coords.latitude, lng: position.coords.longitude};
@@ -47,7 +45,6 @@
               icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
               map: map
           });
-
       $.ajax({
           type: 'POST',
           url: '/api/map/route/',
