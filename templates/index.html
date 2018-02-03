@@ -9,10 +9,20 @@
     </style>
   </head>
   <body>
+    <p id="mapping"></p>
+    <script>
+    var x = document.getElementById("mapping");
+    function initMap() {
+    var uluru = {lat: 21.2563316, lng: 81.6282785};
+    var map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 14,
+      center: uluru
+    });
+  }
+  </script>
   <p>Find Your Nearest Toilet.</p>
 
   <button onclick="getLocation()">Get Your Location</button>
-
   <p id="demo"></p>
 
   <script>
@@ -37,6 +47,7 @@
               icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
               map: map
           });
+
       $.ajax({
           type: 'POST',
           url: '/api/map/route/',
@@ -53,7 +64,23 @@
                     icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
                     map: map
                   });
-                }
+            var contentString = '<div id="content">'+
+            '<div id="siteNotice">'+
+            '</div>'+
+            '<div id="bodyContent">'+
+            '<p><b>Address</b> : Testing Address</p>'
+            '<p><b>Ratings</b> : 3.5'
+            '<p><a href="https://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">'+
+            'https://en.wikipedia.org/w/index.php?title=Uluru</a>More</p>'+
+            '</div>'+
+            '</div>';
+            var infowindow = new google.maps.InfoWindow({
+          content: contentString
+        });
+        marker.addListener('click', function() {
+          infowindow.open(map, marker);
+        });
+      }
                   else {
                   var marker = new google.maps.Marker({
                   position: loc[i],
@@ -61,6 +88,22 @@
                   icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
                   map: map
                   });
+                  var contentString = '<div id="content">'+
+                  '<div id="siteNotice">'+
+                  '</div>'+
+                  '<div id="bodyContent">'+
+                  '<p><b>Address</b> : Testing Address</p>'
+                  '<p><b>Ratings</b> : 3.5'
+                  '<p><a href="https://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">'+
+                  'https://en.wikipedia.org/w/index.php?title=Uluru</a>More</p>'+
+                  '</div>'+
+                  '</div>';
+                  var infowindow = new google.maps.InfoWindow({
+                content: contentString
+              });
+              marker.addListener('click', function() {
+                infowindow.open(map, marker);
+              });
                 }
               }
               console.log(locations);
