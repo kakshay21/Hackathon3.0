@@ -55,58 +55,38 @@
           success: function(data) {
               {#console.log(data['location']);#}
               var loc =  data['location']
+              var infoWindow = new google.maps.InfoWindow();
               for(var i in loc){
                   locations.push(loc[i]);
                   if (i == 0) {
-                    
                     var marker = new google.maps.Marker({
                     position: loc[i],
                     animation: google.maps.Animation.DROP,
                     icon: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
                     map: map
                   });
-            var contentString = '<div id="content">'+
-            '<div id="siteNotice">'+
-            '</div>'+
-            '<div id="bodyContent">'+
-            '<p><b>Address</b> : Testing Address</p>'
-            '<p><b>Ratings</b> : 3.5'
-            '<p><a href="https://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">'+
-            'https://en.wikipedia.org/w/index.php?title=Uluru</a>More</p>'+
-            '</div>'+
-            '</div>';
-            var infowindow = new google.maps.InfoWindow({
-          content: contentString
-        });
-        marker.addListener('click', function() {
-          infowindow.open(map, marker);
-        });
-      }
-                  else {
-                  var marker = new google.maps.Marker({
-                  position: loc[i],
-                  animation: google.maps.Animation.DROP,
-                  icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
-                  map: map
-                  });
-                  var contentString = '<div id="content">'+
-                  '<div id="siteNotice">'+
-                  '</div>'+
-                  '<div id="bodyContent">'+
-                  '<p><b>Address</b> : Testing Address</p>'
-                  '<p><b>Ratings</b> : 3.5'
-                  '<p><a href="https://en.wikipedia.org/w/index.php?title=Uluru&oldid=297882194">'+
-                  'https://en.wikipedia.org/w/index.php?title=Uluru</a>More</p>'+
-                  '</div>'+
-                  '</div>';
-                  var infowindow = new google.maps.InfoWindow({
-                content: contentString
-              });
-              marker.addListener('click', function() {
-                infowindow.open(map, marker);
-              });
+                  google.maps.event.addListener(marker, 'click', (function(marker, i) {
+            return function() {
+                infoWindow.setContent("Testing Information");
+                infoWindow.open(map, marker);
+            }
+        })(marker, i));
                 }
-              }
+              else {
+                var marker = new google.maps.Marker({
+                position: loc[i],
+                animation: google.maps.Animation.DROP,
+                icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+                map: map
+              });
+              google.maps.event.addListener(marker, 'click', (function(marker, i) {
+        return function() {
+            infoWindow.setContent("Testing Information");
+            infoWindow.open(map, marker);
+        }
+    })(marker, i));
+        }
+      }
               console.log(locations);
           },
           contentType: "application/json",
