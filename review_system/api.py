@@ -34,8 +34,20 @@ class MapResource(ModelResource):
                 self.wrap_view('find_near_by_location'), name="api_find_near_by_location"),
             url(r"^(?P<resource_name>%s)/review%s$" %
                 (self._meta.resource_name_user, trailing_slash()),
-                self.wrap_view('store_user_reviews'), name="api_store_user_reviews")
+                self.wrap_view('store_user_reviews'), name="api_store_user_reviews"),
+            url(r"^(?P<resource_name>%s)/get_review%s$" %
+                (self._meta.resource_name_user, trailing_slash()),
+                self.wrap_view('get_user_review'), name="api_get_user_review")
         ]
+
+    def get_user_review(self, request, *args, **kwargs):
+        if request:
+            review = "WOW"
+            rating = 4.8
+            data = {'rating': rating, 'review': review}
+            return self.create_response(request, {
+                'data': data
+            })
 
     def store_user_reviews(self, request, *args, **kwargs):
         if request:
