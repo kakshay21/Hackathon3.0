@@ -15,6 +15,7 @@ class Map(models.Model):
     address = models.TextField(max_length=200, null=True)
     rating = models.FloatField(default=0.0)
     # overall_reviews = models.ForeignKey()
+
     def __unicode__(self):
         return self.location
 
@@ -32,6 +33,8 @@ class Reviews(models.Model):
     rating = models.FloatField(default=0.0)
     user_locations = models.TextField(max_length=200, null=True)
     sentiment = models.FloatField(default=0.0)
+    time = models.TimeField(null=True)
+
 
     def __unicode__(self):
         return self.location
