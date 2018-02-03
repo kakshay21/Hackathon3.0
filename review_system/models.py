@@ -11,9 +11,18 @@ class Map(models.Model):
     # title = models.CharField(max_length=200)
     # slug = models.SlugField(null=True, blank=True)
     # body = models.TextField()
-    location = models.CharField(max_length=200)
-    placeId = models.CharField(max_length=200)
+    place_id = models.TextField(max_length=700, null=True)
+    address = models.TextField(max_length=200, null=True)
     rating = models.FloatField(default=0.0)
+    # overall_reviews = models.ForeignKey()
+
+
+class Reviews(models.Model):
+    place_id = models.ForeignKey(Map)
+    reviews = models.TextField(max_length=1000, null=True)
+    rating = models.FloatField(default=0.0)
+    user_locations = models.TextField(max_length=200, null=True)
+    sentiment = models.FloatField(default=0.0)
 
     def __unicode__(self):
         return self.location

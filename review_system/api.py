@@ -45,7 +45,7 @@ class MapResource(ModelResource):
                     location = result[i]['geometry']['location']
                     locations.append(location)
                     # print location
-                print locations
+                # print locations
                 return self.create_response(request, {
                     'status': "sucess",
                     'location': locations
