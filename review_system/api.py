@@ -5,8 +5,8 @@ from tastypie.utils.urls import trailing_slash
 from django.conf.urls import url
 from utils import near_by_places
 from utils import find_route
-from django.shortcuts import redirect
 from tastypie.utils.timezone import now
+from models import Map
 import json
 
 API_BASE_URL = 'api/map/'
@@ -46,7 +46,7 @@ class MapResource(ModelResource):
             review_object = Reviews.objects.create(review=review, rating=rating, time=now())
             review_object.save()
             return self.create_response(request, {
-                'status': "sucess"
+                'status': "success"
             })
 
     def find_near_by_location(self, request, *args, **kwargs):
@@ -60,15 +60,18 @@ class MapResource(ModelResource):
                 result = resp['results']
                 # print result
                 locations = []
-
                 for i in range(10):
                     # print result[i]
+                    place_id = result[i]['place_id']
+                    address = result[i]['vicinity']
                     location = result[i]['geometry']['location']
+                    map = Map.objects.create(place_id=place_id, address=address, location=location)
+                    map.save()
                     locations.append(location)
                     # print location
                 # print locations
                 return self.create_response(request, {
-                    'status': "sucess",
+                    'status': "success",
                     'location': locations
                 })
 
@@ -81,7 +84,7 @@ class MapResource(ModelResource):
             if resp:
                 print resp
                 return self.create_response(request, {
-                    'status': "sucess"
+                    'status': "success"
                 })
 
     def _post_resp(self, rel_url, data, res_type):
