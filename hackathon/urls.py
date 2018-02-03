@@ -17,13 +17,13 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from review_system.api import MapResource
 from review_system.views import home
-from review_system.views import mark_on_the_map
+from review_system.views import user_inputs
 
 entry_resource = MapResource()
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^home/', home),
-    url(r'^map/', mark_on_the_map),
+    url(r'^user/', user_inputs),
     url(r'^api/', include(entry_resource.urls)),
 ]
