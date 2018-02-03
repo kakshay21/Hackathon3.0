@@ -15,6 +15,15 @@ class Map(models.Model):
     address = models.TextField(max_length=200, null=True)
     rating = models.FloatField(default=0.0)
     # overall_reviews = models.ForeignKey()
+    def __unicode__(self):
+        return self.location
+
+    def save(self, *args, **kwargs):
+        # For automatic slug generation.
+        if not self.slug:
+            self.slug = slugify(self.location)[:50]
+
+        return super(Map, self).save(*args, **kwargs)
 
 
 class Reviews(models.Model):
@@ -30,6 +39,6 @@ class Reviews(models.Model):
     def save(self, *args, **kwargs):
         # For automatic slug generation.
         if not self.slug:
-            self.slug = slugify(self.location)[:50]
+            self.slug = slugify(self.reviews)[:50]
 
-        return super(Map, self).save(*args, **kwargs)
+        return super(Reviews, self).save(*args, **kwargs)
