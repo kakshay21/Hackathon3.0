@@ -28,20 +28,20 @@ class Map(models.Model):
 
 
 class Reviews(models.Model):
-    place_id = models.ForeignKey(Map)
-    reviews = models.TextField(max_length=1000, null=True)
+    # place_id = models.ForeignKey(Map)
+    review = models.TextField(max_length=1000, null=True)
     rating = models.FloatField(default=0.0)
     user_locations = models.TextField(max_length=200, null=True)
     sentiment = models.FloatField(default=0.0)
     time = models.TimeField(null=True)
 
 
-    def __unicode__(self):
-        return self.location
-
-    def save(self, *args, **kwargs):
-        # For automatic slug generation.
-        if not self.slug:
-            self.slug = slugify(self.reviews)[:50]
-
-        return super(Reviews, self).save(*args, **kwargs)
+    # def __unicode__(self):
+    #     return self.location
+    #
+    # def save(self, *args, **kwargs):
+    #     # For automatic slug generation.
+    #     if not self.slug:
+    #         self.slug = slugify(self.review)[:50]
+    #
+    #     return super(Reviews, self).save(*args, **kwargs)
