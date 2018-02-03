@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <p>User form</p>
+  </head>
+  <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <body>
+    <div class="container">
+        <form id="form">
+        <section>
+            <label for="reviews">Reviews *</label>
+            <input id="reviews" name="reviews" type="text" class="required">
+            <label for="ratings">Ratings *</label>
+            <input id="ratings" name="ratings" type="text" class="required">
+            <input type="button" id="myButton" onclick="send_user_reviews();">Submit</input>
+        </section>
+        </form>
+  </div>
+  <script>
+      function send_user_reviews() {
+          var reviews = $('#reviews').val();
+          var ratings = $('#ratings').val();
+          var data = {'review':reviews, 'rating':ratings};
+          $.ajax({
+          type: 'POST',
+          url: '/api/user/review/',
+          data: JSON.stringify(data), // or JSON.stringify ({name: 'jonas'}),
+          success: function(data) {
+              console.log(data);
+          }
+        });
+      }
+  </script>
+  </body>
+</html>
