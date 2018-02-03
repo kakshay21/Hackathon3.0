@@ -26,13 +26,3 @@ class Reviews(models.Model):
     sentiment = models.FloatField(default=0.0)
     time = models.TimeField(null=True)
 
-
-    # def __unicode__(self):
-    #     return self.location
-    #
-    # def save(self, *args, **kwargs):
-    #     # For automatic slug generation.
-    #     if not self.slug:
-    #         self.slug = slugify(self.review)[:50]
-    #
-    #     return super(Reviews, self).save(*args, **kwargs)

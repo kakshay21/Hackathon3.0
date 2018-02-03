@@ -1,5 +1,4 @@
 from tastypie.resources import ModelResource
-from models import Map
 from models import Reviews
 from tastypie.utils.urls import trailing_slash
 from django.conf.urls import url
@@ -7,6 +6,7 @@ from utils import near_by_places
 from utils import find_route
 from tastypie.utils.timezone import now
 from models import Map
+from django.contrib.auth.models import User
 import json
 
 API_BASE_URL = 'api/map/'
@@ -42,8 +42,15 @@ class MapResource(ModelResource):
 
     def get_user_review(self, request, *args, **kwargs):
         if request:
-            review = "WOW"
-            rating = 4.8
+            body = json.loads(request.body)
+            place_id = body['place_id']
+            try:
+                review_query = Reviews.objects.get(place_id__place_id__exact=place_id)
+                review = review_query.review
+                rating = review_query.rating
+            except Reviews.DoesNotExist:
+                review = "This kind of nice"
+                rating = 4.0
             data = {'rating': rating, 'review': review}
             return self.create_response(request, {
                 'data': data
@@ -54,7 +61,7 @@ class MapResource(ModelResource):
             body = json.loads(request.body)
             rating = body['rating']
             review = body['review']
-            print rating, review
+            # print rating, review
             review_object = Reviews.objects.create(review=review, rating=rating, time=now())
             review_object.save()
             return self.create_response(request, {
@@ -72,19 +79,36 @@ class MapResource(ModelResource):
                 result = resp['results']
                 # print result
                 locations = []
+                place_ids = []
+                custom_reviews = ["Clean and Tidy", "Dirty and Unhygienic", "Water supply is irregular",
+                                  "Noisy Environment", "Incomplete Construction", "Entire place smells bad",
+                                  "Ideal for everyone", "Not suitable for women", "Excessive Charge",
+                                  "Remotely located"]
+                custom_ratings = [5, 1, 2.5, 3, 2.5, 3, 4, 3, 3.5, 3]
                 for i in range(10):
                     # print result[i]
                     place_id = result[i]['place_id']
                     address = result[i]['vicinity']
                     location = result[i]['geometry']['location']
-                    map = Map.objects.create(place_id=place_id, address=address, location=location)
-                    map.save()
+                    try:
+                        map_query = Map.objects.get(place_id=place_id)
+                    except Map.DoesNotExist:
+                        map_query = Map.objects.create(place_id=place_id, address=address, location=location)
+                        map_query.save()
+                        review_query = Reviews.objects.create(place_id=map_query,
+                                                              rating=custom_ratings[i],
+                                                              review=custom_reviews[i],
+                                                              user_locations=location,
+                                                              time=now())
+                        review_query.save()
                     locations.append(location)
+                    place_ids.append(place_id)
                     # print location
                 # print locations
                 return self.create_response(request, {
                     'status': "success",
-                    'location': locations
+                    'location': locations,
+                    'place_id': place_ids
                 })
 
     def find_route(self, request, *args, **kwargs):
