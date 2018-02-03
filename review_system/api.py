@@ -40,7 +40,7 @@ class MapResource(ModelResource):
                 # print result
                 locations = []
 
-                for i in range(5):
+                for i in range(10):
                     # print result[i]
                     location = result[i]['geometry']['location']
                     locations.append(location)
