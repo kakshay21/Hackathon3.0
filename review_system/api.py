@@ -6,7 +6,6 @@ from utils import near_by_places
 from utils import find_route
 from tastypie.utils.timezone import now
 from models import Map
-from django.contrib.auth.models import User
 import json
 
 API_BASE_URL = 'api/map/'
@@ -37,8 +36,27 @@ class MapResource(ModelResource):
                 self.wrap_view('store_user_reviews'), name="api_store_user_reviews"),
             url(r"^(?P<resource_name>%s)/get_review%s$" %
                 (self._meta.resource_name_user, trailing_slash()),
-                self.wrap_view('get_user_review'), name="api_get_user_review")
+                self.wrap_view('get_user_review'), name="api_get_user_review"),
+            url(r"^(?P<resource_name>%s)/rating%s$" %
+                (self._meta.resource_name_user, trailing_slash()),
+                self.wrap_view('get_rating'), name="api_get_user_review")
         ]
+
+    def get_rating(self, request, *args, **kwargs):
+        review_query = Reviews.objects.all()
+        counter = {"1": 0, "2": 0, "3": 0, "4": 0, "5": 0}
+        for i in review_query:
+            if i.rating <=1 and i.rating >=0:
+                counter["1"] = counter["1"] + 1
+            if i.rating <= 2 and i.rating >=1:
+                counter["2"] = counter["2"] + 1
+            if i.rating <= 3 and i.rating >=2:
+                counter["3"] = counter["3"] + 1
+            if i.rating <= 4 and i.rating >=3:
+                counter["4"] = counter["4"] + 1
+            if i.rating <= 5 and i.rating >=4:
+                counter["5"] = counter["5"] + 1
+        return self.create_response(request, counter)
 
     def get_user_review(self, request, *args, **kwargs):
         if request:
@@ -80,6 +98,7 @@ class MapResource(ModelResource):
                 # print result
                 locations = []
                 place_ids = []
+                address_list = []
                 custom_reviews = ["Clean and Tidy", "Dirty and Unhygienic", "Water supply is irregular",
                                   "Noisy Environment", "Incomplete Construction", "Entire place smells bad",
                                   "Ideal for everyone", "Not suitable for women", "Excessive Charge",
@@ -96,6 +115,7 @@ class MapResource(ModelResource):
                         map_query = Map.objects.create(place_id=place_id, address=address, location=location)
                         map_query.save()
                         review_query = Reviews.objects.create(place_id=map_query,
+                                                              address=address,
                                                               rating=custom_ratings[i],
                                                               review=custom_reviews[i],
                                                               user_locations=location,
@@ -103,12 +123,14 @@ class MapResource(ModelResource):
                         review_query.save()
                     locations.append(location)
                     place_ids.append(place_id)
+                    address_list.append(address)
                     # print location
                 # print locations
                 return self.create_response(request, {
                     'status': "success",
                     'location': locations,
-                    'place_id': place_ids
+                    'place_id': place_ids,
+                    'address_list': address_list
                 })
 
     def find_route(self, request, *args, **kwargs):

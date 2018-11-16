@@ -1,67 +1,134 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
+<html>
+<head>
+<title>DashBoard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+  body {
+      font-family: "Lato", sans-serif;
+  }
 
-    <title>Starter Template for Bootstrap</title>
+  .sidenav {
+      height: 100%;
+      width: 200px;
+      position: fixed;
+      z-index: 1;
+      top: 0;
+      left: 0;
+      background-color: #111;
+      overflow-x: hidden;
+      padding-top: 20px;
+  }
 
-    <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  .sidenav a {
+      padding: 6px 6px 6px 32px;
+      text-decoration: none;
+      font-size: 25px;
+      color: #818181;
+      display: block;
+  }
 
-    <!-- Custom styles for this template -->
+  .sidenav a:hover {
+      color: #f1f1f1;
+  }
+
+  .main {
+      margin-left: 225px; /* Same as the width of the sidenav */
+  }
+
+  @media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+  }
+  </style>
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   </head>
-
   <body>
 
-    <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse fixed-top">
-      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <a class="navbar-brand" href="#">Navbar</a>
+  <div class="sidenav">
+    <a href="#">Reviews</a>
+    <a href="#">Ratings</a>
+    <a href="#">Charts</a>
+    <a href="#">Review Us</a>
+  </div>
 
-      <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-        <ul class="navbar-nav mr-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link disabled" href="#">Disabled</a>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="http://example.com" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-            <div class="dropdown-menu" aria-labelledby="dropdown01">
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
-              <a class="dropdown-item" href="#">Something else here</a>
+  <div class="main">
+    <h2>DashBoard</h2>
+    <p>This Dashboard represents various stats related to Public Toilet Sanitation.</p>
+      <div class="container">
+    <br>
+    <br>
+    <br>
+      <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+              <canvas id="pie-chart" width="800" height="450"></canvas>
+              <canvas id="line-chart" width="800" height="450"></canvas>
             </div>
-          </li>
-        </ul>
-        <form class="form-inline my-2 my-lg-0">
-          <input class="form-control mr-sm-2" type="text" placeholder="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
+            <div class="col-md-6">
+              <center><h2>Recent reviews</h2></center>
+              <div class="list-group">
+                {% for ra, re in address_and_reviews %}
+                <div class="list-group-item">
+                  <h4 class="list-group-item-heading">{{ re }}</h4>
+                  <p class="list-group-item-text">{{ ra }}</p>
+                </div>
+                {% endfor %}
+              </div> 
+            </div>
+        </div>
       </div>
-    </nav>
-
-    <div class="container">
-    <br>
-    <br>
-    <br>
-        {% for re in reviews %}
-          <p>{{ re }}</p>
-        {% endfor %}
-        {% for re in ratings %}
-          <p>{{ re }}</p>
-        {% endfor %}
-
-
-    </div><!-- /.container -->
+  <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
+  <script>
+      var array = [];
+      $.ajax({
+          type: 'GET',
+          url: '/api/user/rating/',
+          success: function (data) {
+              //console.log(data)
+              for (var key in data){
+                array.push(data[key])
+              }
+          }
+      });
+      console.log(array)
+      new Chart(document.getElementById("pie-chart"), {
+    type: 'pie',
+    data: {
+      labels: ["1 Star", "2 Star", "3 Star", "4 Star", "5 Star"],
+      datasets: [{
+        label: "Ratings (Avg. Star)",
+        backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+        data: array
+      }]
+    },
+    options: {
+      title: {
+        display: true,
+        text: 'Avg Ratings of Toilets in City'
+      }
+    }
+    });
+      new Chart(document.getElementById("line-chart"), {
+  type: 'line',
+  data: {
+    labels: ["00:00-03:00","03:00-06:00","06:00-09:00","09:00-12:00","12:00-15:00","15:00-18:00","18:00-21:00","21:00-24:00"],
+    datasets: [{ 
+        data: [45,114,221,106,67,150,121,91],
+        label: "Time-Wise Usage Statistics",
+        borderColor: "#3e95cd",
+        fill: false
+      }]
+    },options: {
+    title: {
+      display: true,
+      text: 'World population per region (in millions)'
+    }
+  }
+});
+  </script>
+    </div>
 
 
     <!-- Bootstrap core JavaScript
