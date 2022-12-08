@@ -1,4 +1,4 @@
-certifi==2018.1.18
+certifi==2022.12.7
 chardet==3.0.4
 django>=1.11.15
 django-tastypie==0.14.0
